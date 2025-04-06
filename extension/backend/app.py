@@ -262,27 +262,18 @@ def google_callback():
         employee = Employee.query.filter_by(email=user_email).first()
 
         if employee:
-            # Update existing employee
-            employee.refresh_token = credentials.refresh_token # Update refresh token
+            # Update existing employee - only refresh token and avatar
+            employee.refresh_token = credentials.refresh_token
             employee.avatar = user_avatar
             employee.lastLogin = datetime.utcnow()
+            
+            # Check if employee doesn't have a company, assign to specific company
+            if not employee.companyId:
+                employee.companyId = "27f32072-d75b-4d4f-ab5e-83ae10a7693a"
+                print(f"Associated existing employee {user_email} with specified company")
+                
             print(f"Updated employee: {user_email}")
         else:
-            # Find or create the yulti company
-            yulti_company = Company.query.filter_by(name="yulti").first()
-            if not yulti_company:
-                # Create the yulti company if it doesn't exist
-                yulti_company = Company(
-                    name="yulti",
-                    email="admin@yulti.com",
-                    password="SECURELY_HASHED_PASSWORD",  # Replace with proper password hashing
-                    createdAt=datetime.utcnow(),
-                    updatedAt=datetime.utcnow()
-                )
-                db.session.add(yulti_company)
-                db.session.flush()  # Get the ID
-                print("Created new default company: yulti")
-
             # Create new employee with secure password
             # In production, implement proper password hashing
             secure_password = uuid.uuid4().hex  # Generate random password
@@ -294,14 +285,14 @@ def google_callback():
                 password=secure_password,  # Should be properly hashed in production
                 refresh_token=credentials.refresh_token,
                 avatar=user_avatar,
-                companyId=yulti_company.id,  # Associate with yulti company
+                companyId="27f32072-d75b-4d4f-ab5e-83ae10a7693a",  # Use the specified company ID
                 browser_activity=[],  # Initialize as empty array since DB expects jsonb[]
                 lastLogin=datetime.utcnow(),
                 createdAt=datetime.utcnow(),
                 updatedAt=datetime.utcnow()
             )
             db.session.add(employee)
-            print(f"Created new employee: {user_email} in company: yulti")
+            print(f"Created new employee: {user_email} with specified company ID")
 
         try:
             db.session.commit()
