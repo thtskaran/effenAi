@@ -21,9 +21,8 @@ from models import db, Company, Employee, Document, ActionPlan, Action, Status, 
 app = Flask(__name__)
 app.config.from_object(Config)
 db.init_app(app)
-CORS(app, supports_credentials=True, origins=["chrome-extension://YOUR_EXTENSION_ID"]) # Allow requests from your extension ID
+CORS(app, supports_credentials=True, origins="*")  # Allow requests from any origin
 app.secret_key = Config.SECRET_KEY # Needed for session management if used
-
 # --- OpenAI Client Setup ---
 try:
     openai_client = OpenAI(api_key=Config.OPENAI_API_KEY)
@@ -269,42 +268,40 @@ def google_callback():
             employee.lastLogin = datetime.utcnow()
             print(f"Updated employee: {user_email}")
         else:
-            # Create new employee (requires company association - how to determine?)
-            # --- !!! IMPORTANT !!! ---
-            # You need logic here to associate the employee with a Company.
-            # This might involve:
-            # 1. Assuming a default company.
-            # 2. Having the user select a company during onboarding (not handled here).
-            # 3. Matching email domain to a known company domain.
-            # For now, we'll raise an error or assign to a default if one exists.
-            # Let's assume a default company needs to be created or fetched first.
-            # This part needs refinement based on your application's user/company structure.
+            # Find or create the yulti company
+            yulti_company = Company.query.filter_by(name="yulti").first()
+            if not yulti_company:
+                # Create the yulti company if it doesn't exist
+                yulti_company = Company(
+                    name="yulti",
+                    email="admin@yulti.com",
+                    password="SECURELY_HASHED_PASSWORD",  # Replace with proper password hashing
+                    createdAt=datetime.utcnow(),
+                    updatedAt=datetime.utcnow()
+                )
+                db.session.add(yulti_company)
+                db.session.flush()  # Get the ID
+                print("Created new default company: yulti")
 
-            # --- Placeholder: Find or create a default company ---
-            default_company = Company.query.filter_by(email="default@company.com").first()
-            if not default_company:
-                 # If no default company, maybe create one (or fail the login)
-                 # default_company = Company(name="Default Company", email="default@company.com", password="HASHED_PASSWORD")
-                 # db.session.add(default_company)
-                 # db.session.flush() # Get ID
-                 print("Error: Default company not found. Cannot create new employee.")
-                 return jsonify({"success": False, "error": "Company setup required for new user"}), 500
-
-            # You also need a placeholder password or a proper user creation flow
-            placeholder_password = "DEFAULT_HASHED_PASSWORD" # Replace with actual hashing
-
+            # Create new employee with secure password
+            # In production, implement proper password hashing
+            secure_password = uuid.uuid4().hex  # Generate random password
+            
             employee = Employee(
                 email=user_email,
                 firstName=first_name,
                 lastName=last_name,
-                password=placeholder_password, # Needs proper handling
+                password=secure_password,  # Should be properly hashed in production
                 refresh_token=credentials.refresh_token,
                 avatar=user_avatar,
-                companyId=default_company.id, # Assign to default/found company
-                lastLogin=datetime.utcnow()
+                companyId=yulti_company.id,  # Associate with yulti company
+                browser_activity=[],  # Initialize as empty array since DB expects jsonb[]
+                lastLogin=datetime.utcnow(),
+                createdAt=datetime.utcnow(),
+                updatedAt=datetime.utcnow()
             )
             db.session.add(employee)
-            print(f"Created new employee: {user_email}")
+            print(f"Created new employee: {user_email} in company: yulti")
 
         try:
             db.session.commit()
@@ -421,7 +418,7 @@ def audio_stream_end():
 
 @app.route('/activity/log', methods=['POST'])
 def activity_log():
-    """Receives daily browsing activity log."""
+    """Receives daily browsing activity log and stores as a Document."""
     data = request.get_json()
     if not data or not all(k in data for k in ('userId', 'date', 'activity')):
         return jsonify({"success": False, "error": "Missing data"}), 400
@@ -441,22 +438,33 @@ def activity_log():
         return jsonify({"success": False, "error": "Employee not found"}), 404
 
     try:
-        # Update the browser_activity field.
-        # This replaces the entire field with the new JSON array for that day.
-        # If you need to append or store historically, the logic would change.
-        employee.browser_activity = activity_data
-        employee.updatedAt = datetime.utcnow() # Update timestamp
-
+        # Create a new Document to store the activity log
+        activity_document = Document(
+            title=f"Activity Log - {log_date_str}",
+            content=json.dumps(activity_data),  # Store as JSON string
+            type="ACTIVITY_LOG",  # Assuming Document has a type field
+            employeeId=employee.id,
+            createdAt=datetime.utcnow(),
+            updatedAt=datetime.utcnow()
+        )
+        
+        db.session.add(activity_document)
+        
+        # Also update the employee's last activity timestamp
+        employee.updatedAt = datetime.utcnow()
+        
         db.session.commit()
-        print(f"Updated activity log for {user_id_email} on {log_date_str}")
-        return jsonify({"success": True}), 200
+        
+        print(f"Saved activity log document for {user_id_email} on {log_date_str}")
+        return jsonify({
+            "success": True,
+            "documentId": activity_document.id
+        }), 200
 
     except Exception as e:
         db.session.rollback()
         print(f"Error saving activity log for {user_id_email}: {e}")
-        return jsonify({"success": False, "error": "Database error saving activity log"}), 500
-
-
+        return jsonify({"success": False, "error": f"Database error saving activity log: {str(e)}"}), 500
 # --- Database Initialization Command ---
 @app.cli.command("init-db")
 def init_db():

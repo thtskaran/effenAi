@@ -44,9 +44,8 @@ class Employee(db.Model):
     phone = db.Column(db.String, nullable=True)
     refresh_token = db.Column(db.String, nullable=True) # Store Google Refresh Token
     avatar = db.Column(db.String, nullable=True) # Store Google Avatar URL
-    # Store as JSON. Use db.JSON if your DB supports it natively and efficiently,
-    # otherwise TEXT might be simpler if you just store the JSON string.
-    browser_activity = db.Column(db.JSON, nullable=False, default=[]) # Default to empty list
+    # Changed from JSON to String to match Prisma schema
+    browser_activity = db.Column(db.String, nullable=False, default="[]") 
     lastLogin = db.Column(db.DateTime, nullable=True)
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -79,7 +78,9 @@ class ActionPlan(db.Model):
     description = db.Column(db.Text, nullable=True) # Use Text
     urgency = db.Column(db.Integer, default=5)
     priority = db.Column(SQLEnum(Priority), default=Priority.MEDIUM)
-    startDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow) # Added default
+    # Added workflow field to match Prisma schema
+    workflow = db.Column(db.String, nullable=True)
+    startDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     endDate = db.Column(db.DateTime, nullable=True)
     status = db.Column(SQLEnum(Status), default=Status.PENDING)
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
