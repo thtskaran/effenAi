@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id        String     @id @default(uuid())
+  name      String
+  email     String     @unique
+  phone     String?
+  password  String
+  logo      String?
+  address   String?
+  industry  String?
+  website   String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  employees Employee[]
+}
+
+model Employee {
+  id               String       @id @default(uuid())
+  firstName        String
+  lastName         String
+  email            String       @unique
+  password         String
+  position         String?
+  phone            String?
+  refresh_token    String?
+  avatar           String?
+  browser_activity Json[]       @default([])
+  lastLogin        DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  companyId        String
+  company          Company      @relation(fields: [companyId], references: [id])
+  actionPlans      ActionPlan[]
+  documents        Document[] // New relation
+}
+
+model Document {
+  id         String   @id @default(uuid())
+  title      String
+  content    String
+  fileType   String // pdf, doc, txt, etc.
+  fileSize   Int
+  filePath   String?
+  isArchived Boolean  @default(false)
+  embeddings Json? // Store document embeddings for AI
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+}
+
+model ActionPlan {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  urgency     Int      @default(5)
+  priority    Priority @default(MEDIUM)
+
+  startDate  DateTime
+  endDate    DateTime?
+  status     Status    @default(PENDING)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  employeeId String
+  employee   Employee  @relation(fields: [employeeId], references: [id])
+  actions    Action[]
+}
+
+model Action {
+  id           String     @id @default(uuid())
+  title        String
+  description  String?
+  dueDate      DateTime?
+  code         String?
+  status       Status     @default(PENDING)
+  priority     Priority   @default(MEDIUM)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  actionPlanId String
+  actionPlan   ActionPlan @relation(fields: [actionPlanId], references: [id])
+}
+
+enum Status {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
