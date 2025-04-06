@@ -39,16 +39,11 @@ export function EmployeeSidebar({
             <SidebarMenuButton size="lg" asChild>
               <Link href="/applicant/dashboard">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Image
-                    src="/logo.png"
-                    alt="Yukti Logo"
-                    width={60}
-                    height={60}
-                  />
+                  <Image src="/logo.png" alt="Logo" width={60} height={60} />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Applicant</span>
-                  <span className="truncate text-xs">Yukti AI</span>
+                  <span className="truncate font-semibold">Employee</span>
+                  <span className="truncate text-xs">Effen AI</span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -65,7 +60,7 @@ export function EmployeeSidebar({
                   className="py-6 text-lg duration-200 transition-colors"
                   asChild
                 >
-                  <Link href="/applicant/dashboard">
+                  <Link href="/employee/dashboard/">
                     <MdDashboard className="!size-5" />
                     <span>Dashboard</span>
                   </Link>
@@ -76,9 +71,9 @@ export function EmployeeSidebar({
                   className="py-6 text-lg duration-200 transition-colors"
                   asChild
                 >
-                  <Link href="/applicant/dashboard/jobs">
+                  <Link href="/employee/dashboard/action-plans">
                     <FaBriefcase className="!size-5" />
-                    <span>Job hunting</span>
+                    <span>Action Plans</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -87,9 +82,9 @@ export function EmployeeSidebar({
                   className="py-6 text-lg duration-200 transition-colors"
                   asChild
                 >
-                  <Link href="/applicant/dashboard/applied-jobs">
+                  <Link href="/employee/dashboard/emails">
                     <FaClipboardCheck className="!size-5" />
-                    <span>Applied jobs</span>
+                    <span>Emails</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -98,9 +93,9 @@ export function EmployeeSidebar({
                   className="py-6 text-lg duration-200 transition-colors"
                   asChild
                 >
-                  <Link href="/applicant/dashboard/interview">
+                  <Link href="/employee/dashboard/meet-insights">
                     <FaUserTie className="!size-5" />
-                    <span>Interviews</span>
+                    <span>Meet Insights</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -110,9 +105,9 @@ export function EmployeeSidebar({
                   className="py-6 text-lg duration-200 transition-colors"
                   asChild
                 >
-                  <Link href="/applicant/dashboard/resume-analyser">
+                  <Link href="/employee/dashboard/chat-with-document">
                     <FaFileAlt className="!size-5" />
-                    <span>Resume Analyser</span>
+                    <span>Chat With Document</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

@@ -32,7 +32,7 @@ model Employee {
   phone            String?
   refresh_token    String?
   avatar           String?
-  browser_activity Json[]       @default([])
+  browser_activity String       @default("[]")
   lastLogin        DateTime?
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
@@ -58,20 +58,20 @@ model Document {
 }
 
 model ActionPlan {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   title       String
   description String?
-  urgency     Int      @default(5)
-  priority    Priority @default(MEDIUM)
-
-  startDate  DateTime
-  endDate    DateTime?
-  status     Status    @default(PENDING)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  employeeId String
-  employee   Employee  @relation(fields: [employeeId], references: [id])
-  actions    Action[]
+  urgency     Int       @default(5)
+  priority    Priority  @default(MEDIUM)
+  workflow    String?
+  startDate   DateTime
+  endDate     DateTime?
+  status      Status    @default(PENDING)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  employeeId  String
+  employee    Employee  @relation(fields: [employeeId], references: [id])
+  actions     Action[]
 }
 
 model Action {
