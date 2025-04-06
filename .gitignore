@@ -3,3 +3,5 @@
 
 extension/backend/browser-extension-backend/.env
 extension/backend/browser-extension-backend/google_client_secret.json
+backend/myenv
+extension/backend/browser-extension-backend/venv
