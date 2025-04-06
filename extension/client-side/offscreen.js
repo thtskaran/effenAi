@@ -57,10 +57,10 @@ async function startCapture(streamId, userId) {
 
         mediaRecorder.ondataavailable = (event) => {
             if (event.data.size > 0) {
-                // Convert blob to Base64 and send to background
+               
                 const reader = new FileReader();
                 reader.onloadend = () => {
-                    // Result contains the Base64 string (without the data: prefix)
+                  
                     const base64String = reader.result.split(',')[1];
                     chrome.runtime.sendMessage({ action: "audioChunk", chunk: base64String });
                      // console.log(`Offscreen: Sent audio chunk (Base64 size: ${base64String.length})`); // Verbose
@@ -72,9 +72,9 @@ async function startCapture(streamId, userId) {
         mediaRecorder.onstop = () => {
             console.log("Offscreen: MediaRecorder stopped.");
             cleanupStreams();
-            // Notify background script that recording naturally stopped
+          
             chrome.runtime.sendMessage({ action: "recordingStopped" });
-             // Reset state
+            
              mediaRecorder = null;
              currentRecordingId = null;
              currentUserId = null;
@@ -86,26 +86,26 @@ async function startCapture(streamId, userId) {
              chrome.runtime.sendMessage({ action: "recordingError", error: event.error.message || 'Unknown MediaRecorder error' });
         };
 
-        // Start recording, collect chunks every few seconds (e.g., 5 seconds)
+      
         mediaRecorder.start(5000);
         console.log("Offscreen: MediaRecorder started.");
 
     } catch (error) {
         console.error("Offscreen: Error starting getUserMedia/MediaRecorder:", error);
          chrome.runtime.sendMessage({ action: "recordingError", error: error.message || 'Failed to get user media' });
-         cleanupStreams(); // Clean up if partially started
+         cleanupStreams(); 
     }
 }
 
 function stopCapture() {
     if (mediaRecorder && mediaRecorder.state === 'recording') {
-        mediaRecorder.stop(); // This will trigger the onstop handler
+        mediaRecorder.stop(); 
          console.log("Offscreen: MediaRecorder stop requested.");
     } else {
         console.log("Offscreen: Stop requested but recorder not active.");
-        cleanupStreams(); // Ensure cleanup even if not recording
+        cleanupStreams();
     }
-     // No need to close document here, background script handles it
+   
 }
 
 function cleanupStreams() {
@@ -125,14 +125,5 @@ function cleanupStreams() {
         audioContext.close();
         audioContext = null;
     }
-     mediaRecorder = null; // Ensure reset
+     mediaRecorder = null; 
 }
-
-// Keep alive for Manifest V3 (basic heartbeat)
-// Note: This is less critical for Offscreen Docs used with USER_MEDIA,
-// as the media stream itself often keeps it alive, but good practice.
-// (async () => {
-//   setInterval(() => {
-//     // console.log("Offscreen heartbeat"); // Very verbose
-//   }, 20000); // Every 20 seconds
-// })();
