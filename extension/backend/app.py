@@ -312,6 +312,7 @@ def process_audio_and_generate_plan(employee_id, recording_id, audio_file_path):
                     dueDate=due_date,
                     priority=priority_enum,
                     status=status_enum,
+                    code=category_code,  # Save the category code to the code field
                     actionPlanId=new_action_plan.id
                 )
                 db.session.add(new_action)
@@ -328,6 +329,7 @@ def process_audio_and_generate_plan(employee_id, recording_id, audio_file_path):
                         description=step_text, # Store the full step description
                         priority=Priority.MEDIUM, # Default priority for generated steps
                         status=Status.PENDING,    # Default status for generated steps
+                        code=category_code,  # Save the category code to the code field
                         actionPlanId=new_action_plan.id,
                         # Consider linking these steps or adding sequence number if needed
                     )
