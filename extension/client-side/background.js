@@ -1,4 +1,4 @@
-const BACKEND_URL = "http://82.112.237.171";
+const BACKEND_URL = "http://127.0.0.1:5000";
 const MEETING_PATTERNS = ['meet.google.com', 'zoom.us/j/'];
 const OFFSCREEN_DOCUMENT_PATH = 'offscreen.html';
 const ACTIVITY_LOG_ALARM = 'dailyActivityLogAlarm';
