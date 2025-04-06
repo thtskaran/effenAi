@@ -1,0 +1,47 @@
+[
+    {
+      "id": 1,
+      "priority": 1,
+      "action": { "type": "block" },
+      "condition": {
+        "urlFilter": "*://*.pornhub.com/*",
+        "resourceTypes": ["main_frame"]
+      }
+    },
+     {
+      "id": 2,
+      "priority": 1,
+      "action": { "type": "block" },
+      "condition": {
+        "urlFilter": "*://*.xhamster.com/*",
+        "resourceTypes": ["main_frame"]
+      }
+    },
+    {
+      "id": 3,
+      "priority": 1,
+      "action": { "type": "block" },
+      "condition": {
+         "urlFilter": "||youtube.com/shorts*", 
+         "resourceTypes": ["main_frame"]
+      }
+    },
+    {
+      "id": 4,
+      "priority": 1,
+      "action": { "type": "block" },
+      "condition": {
+        "urlFilter": "||instagram.com/reels*", 
+        "resourceTypes": ["main_frame"]
+      }
+    },
+     {
+      "id": 5,
+      "priority": 1,
+      "action": { "type": "block" },
+      "condition": {
+        "urlFilter": "*://*.snapchat.com/*", 
+        "resourceTypes": ["main_frame"]
+      }
+    }
+  ]

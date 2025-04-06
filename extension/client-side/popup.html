@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Meeting Assistant</title>
+    <style>
+        body { font-family: sans-serif; width: 250px; padding: 10px; }
+        #userInfo { display: none; align-items: center; margin-bottom: 10px; }
+        #userInfo img { width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;}
+        button { padding: 8px; margin-top: 5px; width: 100%; cursor: pointer; }
+        #status { margin-top: 10px; font-style: italic; color: grey; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <h3>Meeting Assistant</h3>
+
+    <div id="loginSection">
+        <button id="loginButton">Login with Google</button>
+    </div>
+
+    <div id="mainSection" class="hidden">
+        <div id="userInfo">
+            <img id="userAvatar" src="" alt="Avatar">
+            <span id="userEmail"></span>
+        </div>
+        <button id="recordButton">Start Meeting Recording</button>
+        <button id="logoutButton">Logout</button>
+         <div id="status">Idle</div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
