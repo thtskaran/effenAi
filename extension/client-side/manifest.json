@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "Meeting Summarizer & Activity Monitor",
+    "name": "Effen AI",
     "version": "1.0",
     "description": "Summarizes meetings and monitors browsing activity.",
     "permissions": [
